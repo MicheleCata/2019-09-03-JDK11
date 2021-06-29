@@ -53,6 +53,34 @@ public class FoodController {
     void doCammino(ActionEvent event) {
     	txtResult.clear();
     	txtResult.appendText("Cerco cammino peso massimo...");
+    	
+    	String passi = txtPassi.getText();
+    	int n ;
+    	if(passi == null) {
+    		this.txtResult.appendText("INSERISCI NUMERO PASSI!!");
+    	}
+    	try {
+    		n = Integer.parseInt(passi);
+    		
+    	}catch (NumberFormatException e) {
+    		txtResult.setText("Inserisci un valore numerico intero");
+    		return;
+    	}
+    	String tipo = boxPorzioni.getValue();
+    	if (tipo==null) {
+    		txtResult.appendText("SELEZIONA UN TIPO DI PORZIONE!!");
+    	}
+    	
+    	List<Portion> percorso = model.getPercorso(tipo, n);
+    	if (percorso == null) {
+    		this.txtResult.appendText("Non è stato trovato nessun percorso a partire dal vertice indicato");
+    	}
+    	else {
+    		this.txtResult.appendText("Trovato percorso di peso max: "+model.getPesoMax()+"\n");
+    	for (Portion a: percorso) {
+    		this.txtResult.appendText(a.getPortion_display_name()+"\n");
+    	}
+    	}
     }
 
     @FXML

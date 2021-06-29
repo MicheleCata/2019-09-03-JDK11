@@ -18,6 +18,9 @@ public class Model {
 	private FoodDao dao;
 	private Map<String, Portion> idMap;
 	
+	private List<Portion> percorsoMigliore;
+	private int max;
+	
 	public Model() {
 		dao = new FoodDao();
 		idMap =new HashMap<>();
@@ -29,6 +32,7 @@ public class Model {
 		Graphs.addAllVertices(grafo, dao.getVertici(idMap, calorie));
 	
 		for (Adiacenze a: dao.getAdiacenze(idMap, calorie)) {
+			if (this.grafo.containsVertex(a.getP1())&& this.grafo.containsVertex(a.getP2()))
 			Graphs.addEdgeWithVertices(grafo, a.getP1(), a.getP2(), a.getPeso());
 		}
 		
@@ -61,6 +65,54 @@ public class Model {
 		}
 		return result;
 	}
+	
+	public List<Portion> getPercorso(String partenza, int n){
+		this.percorsoMigliore= new ArrayList<>();
+		List<Portion> parziale =  new ArrayList<>();
+		max=0;
+		Portion p = idMap.get(partenza);
+		parziale.add(p);
+		
+		cerca(n, parziale);
+		
+		
+		return this.percorsoMigliore;
+	}
+
+	private void cerca(int n, List<Portion> parziale) {
+		
+		Portion ultimo = parziale.get(parziale.size()-1);
+		if (parziale.size()==n) {
+			if (calcolaPeso(parziale)>max) {
+				this.percorsoMigliore= new ArrayList<>(parziale);
+				max = calcolaPeso(parziale);
+			}
+		}
+		
+		for (Portion p: Graphs.neighborListOf(grafo, ultimo)) {
+			if (!parziale.contains(p)){
+				parziale.add(p);
+				cerca(n,parziale);
+				parziale.remove(parziale.size()-1);
+			}
+		}
+	}
+
+	private int calcolaPeso(List<Portion> parziale) {
+		Integer pesoTot=0;
+		for (int i=1; i<parziale.size(); i++) {
+			Portion p1= parziale.get(i-1);
+			Portion p2= parziale.get(i);
+			
+			pesoTot+= (int) grafo.getEdgeWeight(grafo.getEdge(p1, p2));
+		}
+		return pesoTot;
+	}
+	
+	public int getPesoMax() {
+		return max;
+	}
+	
 
 	
 }
