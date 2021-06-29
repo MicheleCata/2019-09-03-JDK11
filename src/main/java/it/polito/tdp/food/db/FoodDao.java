@@ -135,17 +135,15 @@ public class FoodDao {
 		}
 	}
 	
-	public List<Adiacenze> getAdiacenze(Map<String, Portion> idMap, int calorie) {
+	public List<Adiacenze> getAdiacenze(Map<String, Portion> idMap) {
 		String sql = "SELECT p1.`portion_display_name` as tipo1, p2.`portion_display_name` as tipo2, Count(*) as peso "
 				+ "FROM `portion` p1, `portion` p2 "
-				+ "where p1.calories < ? AND p2.`calories`< ? AND p1.`portion_id`<>p2.`portion_id` AND  p1.`food_code`=p2.food_code "
+				+ "where p1.`portion_id`>p2.`portion_id` AND  p1.`food_code`=p2.food_code "
 				+ "group by tipo1,tipo2";
 		List<Adiacenze> result = new ArrayList<>();
 		Connection conn = DBConnect.getConnection() ;
 		try {
 			PreparedStatement st = conn.prepareStatement(sql) ;
-			st.setInt(1, calorie);
-			st.setInt(2, calorie);
 			ResultSet res = st.executeQuery() ;
 			while(res.next()) {
 				Portion p1 = idMap.get(res.getString("tipo1"));

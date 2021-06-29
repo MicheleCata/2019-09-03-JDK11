@@ -31,7 +31,7 @@ public class Model {
 		grafo = new SimpleWeightedGraph<>(DefaultWeightedEdge.class); 
 		Graphs.addAllVertices(grafo, dao.getVertici(idMap, calorie));
 	
-		for (Adiacenze a: dao.getAdiacenze(idMap, calorie)) {
+		for (Adiacenze a: dao.getAdiacenze(idMap)) {
 			if (this.grafo.containsVertex(a.getP1())&& this.grafo.containsVertex(a.getP2()))
 			Graphs.addEdgeWithVertices(grafo, a.getP1(), a.getP2(), a.getPeso());
 		}
